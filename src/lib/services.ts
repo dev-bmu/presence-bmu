@@ -47,6 +47,10 @@ export async function getHistory(from?: string, to?: string, page = 1) {
   return r.data.data
 }
 
+function photoName(blob: Blob): string {
+  return blob.type === 'image/webp' ? 'photo.webp' : 'photo.jpg'
+}
+
 export async function checkIn(opts: {
   mode: 'WFA' | 'WFO'
   notes?: string
@@ -59,7 +63,7 @@ export async function checkIn(opts: {
   if (opts.notes) fd.append('notes', opts.notes)
   fd.append('lat', String(opts.lat))
   fd.append('lng', String(opts.lng))
-  fd.append('photo', opts.photo, 'photo.jpg')
+  fd.append('photo', opts.photo, photoName(opts.photo))
   const r = await api.post<ApiOk<Attendance>>('/presence/app/me/attendance/check-in', fd, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
@@ -70,7 +74,7 @@ export async function checkOut(opts: { lat: number; lng: number; photo?: Blob })
   const fd = new FormData()
   fd.append('lat', String(opts.lat))
   fd.append('lng', String(opts.lng))
-  if (opts.photo) fd.append('photo', opts.photo, 'photo.jpg')
+  if (opts.photo) fd.append('photo', opts.photo, photoName(opts.photo))
   const r = await api.post<ApiOk<Attendance>>('/presence/app/me/attendance/check-out', fd, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })

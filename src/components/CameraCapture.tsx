@@ -92,27 +92,40 @@ export function CameraCapture({ onCapture, onClear, previewUrl }: Props) {
 
   const flip = () => setFacing((f) => (f === 'environment' ? 'user' : 'environment'))
 
-  const capture = () => {
+  const capture = async () => {
     const v = videoRef.current
     if (!v || !v.videoWidth) return
+
+    // Downscale ke max sisi 720px → WebP, turunkan kualitas sampai < 100KB.
+    const MAX = 720
+    const scale = Math.min(1, MAX / Math.max(v.videoWidth, v.videoHeight))
+    const w = Math.round(v.videoWidth * scale)
+    const h = Math.round(v.videoHeight * scale)
     const canvas = document.createElement('canvas')
-    canvas.width = v.videoWidth
-    canvas.height = v.videoHeight
+    canvas.width = w
+    canvas.height = h
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    ctx.drawImage(v, 0, 0)
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return
-        const url = URL.createObjectURL(blob)
-        stream?.getTracks().forEach((t) => t.stop())
-        setStream(null)
-        setRequested(false)
-        onCapture(blob, url)
-      },
-      'image/jpeg',
-      0.85
-    )
+    ctx.drawImage(v, 0, 0, w, h)
+
+    const supportsWebp = canvas.toDataURL('image/webp').startsWith('data:image/webp')
+    const type = supportsWebp ? 'image/webp' : 'image/jpeg'
+    const TARGET = 100 * 1024
+
+    const toBlob = (q: number) => new Promise<Blob | null>((res) => canvas.toBlob(res, type, q))
+    let q = 0.7
+    let blob = await toBlob(q)
+    while (blob && blob.size > TARGET && q > 0.35) {
+      q -= 0.1
+      blob = await toBlob(q)
+    }
+    if (!blob) return
+
+    const url = URL.createObjectURL(blob)
+    stream?.getTracks().forEach((t) => t.stop())
+    setStream(null)
+    setRequested(false)
+    onCapture(blob, url)
   }
 
   const retake = () => {
