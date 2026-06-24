@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Presence BMU',
   description: 'Sistem presensi karyawan PT Brawijaya Multi Usaha',
   manifest: '/manifest.json',
-  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'Presence BMU' }
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'Presence BMU' }
 }
 
 export const viewport: Viewport = {
@@ -15,7 +15,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#15803d'
+  viewportFit: 'cover',
+  themeColor: '#0c2444'
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

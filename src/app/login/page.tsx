@@ -19,6 +19,20 @@ export default function LoginPage() {
     if (isAuthed()) router.replace('/')
   }, [router])
 
+  // Override html/body bg so iOS Safari chrome + overscroll match the dark login bg.
+  useEffect(() => {
+    const html = document.documentElement
+    const body = document.body
+    const prevHtml = html.style.background
+    const prevBody = body.style.background
+    html.style.background = '#0c2444'
+    body.style.background = '#0c2444'
+    return () => {
+      html.style.background = prevHtml
+      body.style.background = prevBody
+    }
+  }, [])
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !password) return
