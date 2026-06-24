@@ -88,7 +88,7 @@ function Dashboard() {
 
       {/* Shift */}
       <div className="card p-4 flex items-center gap-3 animate-fade-up">
-        <span className="grid place-items-center size-10 rounded-xl bg-[var(--brand-50)] text-[var(--brand-700)] shrink-0"><Clock className="size-5" /></span>
+        <span className="grid place-items-center size-10 rounded-xl bg-(--brand-50) text-(--brand-700) shrink-0"><Clock className="size-5" /></span>
         <div className="flex-1">
           <div className="text-xs text-slate-400">Shift hari ini</div>
           {shift ? (
