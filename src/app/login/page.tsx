@@ -36,15 +36,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center p-4">
-      {/* Background */}
-      <div className="absolute inset-0">
+    <div className="min-h-[100dvh] w-full relative flex items-center justify-center p-4">
+      {/* Background — fixed so it always covers viewport edge-to-edge (iOS safe-area / scroll) */}
+      <div className="fixed inset-0 -z-0">
         <Image src="/bg-bmu.png" alt="" fill priority className="object-cover" />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(150deg, rgba(12,36,68,0.45), rgba(15,44,82,0.32) 50%, rgba(6,40,30,0.45))' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(150deg, rgba(12,36,68,0.75), rgba(15,44,82,0.6) 50%, rgba(6,40,30,0.75))' }} />
       </div>
 
       {/* Card */}
-      <div className="relative w-full max-w-4xl glass-dark overflow-hidden animate-fade-up">
+      <div className="relative z-10 w-full max-w-4xl glass-dark overflow-hidden animate-fade-up">
         <div className="grid md:grid-cols-2">
           {/* Left brand */}
           <div className="p-8 md:p-10 md:border-r border-white/10 flex flex-col">
