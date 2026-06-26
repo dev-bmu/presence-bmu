@@ -22,7 +22,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
     <div className="min-h-screen flex flex-col max-w-md mx-auto bg-[var(--bg)]">
       {/* Header */}
       <header
-        className="sticky top-0 z-10 text-white px-4 pt-4 pb-5 rounded-b-3xl shadow-lg"
+        className="sticky top-0 z-10 text-white px-4 pt-4 pb-4 shadow-md"
         style={{ background: 'linear-gradient(135deg, #0f2c52 0%, #143a6b 55%, #15803d 130%)' }}
       >
         <div className="flex items-center justify-between">
@@ -41,19 +41,18 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
         </div>
       </header>
 
-      <main className="flex-1 p-4 pb-28">{children}</main>
+      <main className="flex-1 p-4 pb-24">{children}</main>
 
-      {/* Bottom nav — transparan + blur */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto">
-        <div
-          className="m-3 flex justify-around py-2 px-2 rounded-2xl border border-white/40"
-          style={{
-            background: 'rgba(255,255,255,0.6)',
-            backdropFilter: 'blur(18px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(18px) saturate(160%)',
-            boxShadow: '0 10px 30px -12px rgba(15,23,42,0.25)'
-          }}
-        >
+      {/* Bottom nav — bar penuh, nempel bawah, blur tipis */}
+      <nav
+        className="fixed bottom-0 left-0 right-0 max-w-md mx-auto border-t border-slate-200/70 px-2 pt-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] z-20"
+        style={{
+          background: 'rgba(255,255,255,0.85)',
+          backdropFilter: 'blur(16px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(160%)'
+        }}
+      >
+        <div className="flex justify-around">
           <NavItem href="/" icon={<Home className="size-5" />} label="Beranda" active={pathname === '/'} />
           <NavItem href="/history" icon={<Clock className="size-5" />} label="Riwayat" active={pathname === '/history'} />
           <NavItem href="/profile" icon={<User className="size-5" />} label="Profil" active={pathname === '/profile'} />
@@ -67,12 +66,12 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
   return (
     <Link
       href={href}
-      className={`flex flex-1 flex-col items-center gap-1 py-1.5 rounded-xl transition ${
-        active ? 'text-white bg-[var(--brand)] shadow' : 'text-slate-500 hover:bg-slate-100'
+      className={`flex flex-1 flex-col items-center gap-0.5 py-1.5 rounded-xl transition ${
+        active ? 'text-[var(--brand-700)]' : 'text-slate-400 hover:text-slate-600'
       }`}
     >
-      {icon}
-      <span className="text-[11px] font-medium">{label}</span>
+      <span className={`grid place-items-center size-9 rounded-xl transition ${active ? 'bg-[var(--brand-50)]' : ''}`}>{icon}</span>
+      <span className="text-[10px] font-medium">{label}</span>
     </Link>
   )
 }
