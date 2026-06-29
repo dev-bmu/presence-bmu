@@ -22,8 +22,11 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
     <div className="min-h-screen flex flex-col max-w-md mx-auto bg-[var(--bg)]">
       {/* Header */}
       <header
-        className="sticky top-0 z-10 text-white px-4 pt-4 pb-4 shadow-md"
-        style={{ background: 'linear-gradient(135deg, #0f2c52 0%, #143a6b 55%, #15803d 130%)' }}
+        className="sticky top-0 z-10 text-white px-4 pb-4 shadow-md"
+        style={{
+          background: 'linear-gradient(135deg, #0f2c52 0%, #143a6b 55%, #15803d 130%)',
+          paddingTop: 'calc(1rem + env(safe-area-inset-top))'
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
