@@ -45,6 +45,10 @@ export async function enableReminder(): Promise<void> {
   await api.post('/presence/app/me/push/subscribe', sub.toJSON())
 }
 
+export async function sendTestReminder(): Promise<void> {
+  await api.post('/presence/app/me/push/test', {})
+}
+
 export async function disableReminder(): Promise<void> {
   const reg = await navigator.serviceWorker.getRegistration()
   const sub = await reg?.pushManager.getSubscription()

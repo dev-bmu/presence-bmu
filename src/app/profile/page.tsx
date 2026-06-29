@@ -9,7 +9,7 @@ import { changePassword } from '@/lib/services'
 import { clearTokens } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { Mail, Building2, Layers, BadgeCheck, Eye, EyeOff, KeyRound, Lock, Bell, BellOff } from 'lucide-react'
-import { getReminderState, enableReminder, disableReminder } from '@/lib/push'
+import { getReminderState, enableReminder, disableReminder, sendTestReminder } from '@/lib/push'
 
 export default function ProfilePage() {
   return (
@@ -128,27 +128,43 @@ function ReminderToggle() {
     }
   }
 
+  const test = async () => {
+    try {
+      await sendTestReminder()
+      toast.success('Notif uji dikirim — cek notifikasi HP/perangkat')
+    } catch (e: any) {
+      toast.error(e?.response?.data?.errors || e?.response?.data?.error || 'Gagal kirim notif uji')
+    }
+  }
+
   const on = state === 'on'
   const disabled = busy || state === 'loading' || state === 'unsupported' || state === 'denied'
 
   return (
-    <div className="card p-4 animate-fade-up flex items-center gap-3">
-      <span className={`grid place-items-center size-10 rounded-xl ${on ? 'bg-[var(--brand-50)] text-[var(--brand-700)]' : 'bg-slate-100 text-slate-400'}`}>
-        {on ? <Bell className="size-5" /> : <BellOff className="size-5" />}
-      </span>
-      <div className="flex-1">
-        <div className="font-semibold text-slate-800 text-sm">Pengingat Clock In/Out</div>
-        <div className="text-xs text-slate-400">
-          {state === 'unsupported' ? 'Tidak didukung browser ini' : state === 'denied' ? 'Izin notifikasi diblokir di setelan browser' : 'Notifikasi 5 menit sebelum jadwal'}
+    <div className="card p-4 animate-fade-up">
+      <div className="flex items-center gap-3">
+        <span className={`grid place-items-center size-10 rounded-xl ${on ? 'bg-[var(--brand-50)] text-[var(--brand-700)]' : 'bg-slate-100 text-slate-400'}`}>
+          {on ? <Bell className="size-5" /> : <BellOff className="size-5" />}
+        </span>
+        <div className="flex-1">
+          <div className="font-semibold text-slate-800 text-sm">Pengingat Clock In/Out</div>
+          <div className="text-xs text-slate-400">
+            {state === 'unsupported' ? 'Tidak didukung browser ini' : state === 'denied' ? 'Izin notifikasi diblokir di setelan browser' : 'Notifikasi 5 menit sebelum jadwal'}
+          </div>
         </div>
+        <button
+          onClick={toggle}
+          disabled={disabled}
+          className={`relative w-12 h-7 rounded-full transition ${on ? 'bg-[var(--brand)]' : 'bg-slate-300'} disabled:opacity-50`}
+        >
+          <span className={`absolute top-1 size-5 rounded-full bg-white transition-all ${on ? 'left-6' : 'left-1'}`} />
+        </button>
       </div>
-      <button
-        onClick={toggle}
-        disabled={disabled}
-        className={`relative w-12 h-7 rounded-full transition ${on ? 'bg-[var(--brand)]' : 'bg-slate-300'} disabled:opacity-50`}
-      >
-        <span className={`absolute top-1 size-5 rounded-full bg-white transition-all ${on ? 'left-6' : 'left-1'}`} />
-      </button>
+      {on && (
+        <button onClick={test} className="mt-3 w-full text-sm font-medium text-[var(--brand-700)] border border-[var(--brand-50)] bg-[var(--brand-50)] rounded-xl py-2 active:scale-[.99] transition">
+          Kirim Notifikasi Uji
+        </button>
+      )}
     </div>
   )
 }
