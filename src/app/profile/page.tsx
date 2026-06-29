@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { AuthGate } from '@/components/AuthGate'
 import { AppShell } from '@/components/AppShell'
@@ -8,7 +8,8 @@ import { useMe } from '@/lib/queries'
 import { changePassword } from '@/lib/services'
 import { clearTokens } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
-import { Mail, Building2, Layers, BadgeCheck, Eye, EyeOff, KeyRound, Lock } from 'lucide-react'
+import { Mail, Building2, Layers, BadgeCheck, Eye, EyeOff, KeyRound, Lock, Bell, BellOff } from 'lucide-react'
+import { getReminderState, enableReminder, disableReminder } from '@/lib/push'
 
 export default function ProfilePage() {
   return (
@@ -73,6 +74,8 @@ function Profile() {
         </div>
       )}
 
+      <ReminderToggle />
+
       <div className="card p-5 animate-fade-up">
         <div className="flex items-center gap-2 mb-4">
           <span className="grid place-items-center size-9 rounded-xl bg-[var(--brand-50)] text-[var(--brand-700)]"><KeyRound className="size-4" /></span>
@@ -93,6 +96,59 @@ function Profile() {
           </button>
         </form>
       </div>
+    </div>
+  )
+}
+
+function ReminderToggle() {
+  const [state, setState] = useState<'on' | 'off' | 'denied' | 'unsupported' | 'loading'>('loading')
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    getReminderState().then(setState).catch(() => setState('unsupported'))
+  }, [])
+
+  const toggle = async () => {
+    setBusy(true)
+    try {
+      if (state === 'on') {
+        await disableReminder()
+        setState('off')
+        toast.success('Pengingat dimatikan')
+      } else {
+        await enableReminder()
+        setState('on')
+        toast.success('Pengingat diaktifkan')
+      }
+    } catch (e: any) {
+      toast.error(e?.message || 'Gagal mengatur pengingat')
+      setState(await getReminderState())
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const on = state === 'on'
+  const disabled = busy || state === 'loading' || state === 'unsupported' || state === 'denied'
+
+  return (
+    <div className="card p-4 animate-fade-up flex items-center gap-3">
+      <span className={`grid place-items-center size-10 rounded-xl ${on ? 'bg-[var(--brand-50)] text-[var(--brand-700)]' : 'bg-slate-100 text-slate-400'}`}>
+        {on ? <Bell className="size-5" /> : <BellOff className="size-5" />}
+      </span>
+      <div className="flex-1">
+        <div className="font-semibold text-slate-800 text-sm">Pengingat Clock In/Out</div>
+        <div className="text-xs text-slate-400">
+          {state === 'unsupported' ? 'Tidak didukung browser ini' : state === 'denied' ? 'Izin notifikasi diblokir di setelan browser' : 'Notifikasi 5 menit sebelum jadwal'}
+        </div>
+      </div>
+      <button
+        onClick={toggle}
+        disabled={disabled}
+        className={`relative w-12 h-7 rounded-full transition ${on ? 'bg-[var(--brand)]' : 'bg-slate-300'} disabled:opacity-50`}
+      >
+        <span className={`absolute top-1 size-5 rounded-full bg-white transition-all ${on ? 'left-6' : 'left-1'}`} />
+      </button>
     </div>
   )
 }
