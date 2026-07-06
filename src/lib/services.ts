@@ -56,6 +56,7 @@ export async function checkIn(opts: {
   notes?: string
   lat: number
   lng: number
+  accuracy?: number
   photo: Blob
 }): Promise<Attendance> {
   const fd = new FormData()
@@ -63,6 +64,7 @@ export async function checkIn(opts: {
   if (opts.notes) fd.append('notes', opts.notes)
   fd.append('lat', String(opts.lat))
   fd.append('lng', String(opts.lng))
+  if (opts.accuracy != null) fd.append('accuracy', String(Math.round(opts.accuracy)))
   fd.append('photo', opts.photo, photoName(opts.photo))
   const r = await api.post<ApiOk<Attendance>>('/presence/app/me/attendance/check-in', fd, {
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -70,10 +72,11 @@ export async function checkIn(opts: {
   return r.data.data
 }
 
-export async function checkOut(opts: { lat: number; lng: number; photo?: Blob }): Promise<Attendance> {
+export async function checkOut(opts: { lat: number; lng: number; accuracy?: number; photo?: Blob }): Promise<Attendance> {
   const fd = new FormData()
   fd.append('lat', String(opts.lat))
   fd.append('lng', String(opts.lng))
+  if (opts.accuracy != null) fd.append('accuracy', String(Math.round(opts.accuracy)))
   if (opts.photo) fd.append('photo', opts.photo, photoName(opts.photo))
   const r = await api.post<ApiOk<Attendance>>('/presence/app/me/attendance/check-out', fd, {
     headers: { 'Content-Type': 'multipart/form-data' }
