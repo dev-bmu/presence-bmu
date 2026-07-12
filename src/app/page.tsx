@@ -55,8 +55,8 @@ function Dashboard() {
     router.push('/check-in')
   }
   const goClockOut = () => {
-    if (!clockedIn) return toast.error('Anda belumm Clock In. Tidak bisa Clock Out.')
-    if (clockedOut) return toast.warning('Anda sudah Clock Out hari ini')
+    if (!clockedIn) return toast.warning('Anda belum Clock In. Silakan Clock In dulu.')
+    if (clockedOut) return toast.warning('Anda sudah Clock Out')
     router.push('/check-in?out=1')
   }
 
@@ -106,7 +106,7 @@ function Dashboard() {
       {/* Clock In / Out */}
       <div className="grid grid-cols-2 gap-3 animate-fade-up">
         <ClockCard kind="in" done={clockedIn} time={att?.checkInAt ? TIMEHM(att.checkInAt) : undefined} onClick={goClockIn} />
-        <ClockCard kind="out" done={clockedOut} disabledLook={!clockedIn} time={att?.checkOutAt ? TIMEHM(att.checkOutAt) : undefined} onClick={goClockOut} />
+        <ClockCard kind="out" done={clockedOut} time={att?.checkOutAt ? TIMEHM(att.checkOutAt) : undefined} onClick={goClockOut} />
       </div>
     </div>
   )
